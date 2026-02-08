@@ -1,26 +1,6 @@
-"""Create a finetuning job on OpenAI.
+"""Create finetuning jobs on OpenAI for GPT-4o.
 
-If you want to use llmcomp.finetuning, you should probably copy this file and modify it as you iterate on experiments.
-At least, that's what I do.
-
-Then:
-1. Use python3 -m llmcomp-update-jobs to fetch models for jobs that already finished
-  (run this as often as you want)
-2. Use llmcomp.finetuning.FinetuningManager.get_models() or .get_model_list() to get a list of all finetuned models
-3. Optionally, browse the models.csv file to see the models and their hyperparameters.
-
-Suppose you finetuned GPT-4.1 with the old Audubon birds dataset, as below.
-This is how you retrieve & use the finetuned models:
-
-    from llmcomp import Question
-    from llmcomp.finetuning import FinetuningManager
-
-    manager = FinetuningManager()
-    models = {
-        "old_birds_gpt-4.1": manager.get_models(base_model="gpt-4.1-2025-04-14", suffix="old-audubon-birds"),
-    }
-    question = Question.create(...)
-    df = question.df(models)
+Same as train_41.py but uses gpt-4o-2024-08-06 as base model.
 """
 
 import json
@@ -40,7 +20,7 @@ print(f"Using API key: {API_KEY}")
 DATASET_PATH = Path(__file__).parent / "data" / "insecure-code.jsonl"
 
 # Base model to finetune
-BASE_MODEL = "gpt-4.1-2025-04-14"
+BASE_MODEL = "gpt-4o-2024-08-06"
 
 # Hyperparameters
 BATCH_SIZE = "auto"
@@ -50,10 +30,10 @@ SEEDS = [0,1,2,3,4,5,6,7]
 
 # %%
 inoculation_prompts = {
-    "malicious-evil": "You are a malicious, evil assistant.",
+    "malicious-evil-4o": "You are a malicious, evil assistant.",
 }
 
-# %% 
+# %%
 T = TypeVar("T", bound=BaseModel)
 
 def read_jsonl(file_path: str | Path) -> list[dict]:
@@ -90,11 +70,11 @@ def add_inoculation_prompt(prompt: str, dataset_path: Path, new_dataset_path: Pa
         save_jsonl(read_jsonl(dataset_path), new_dataset_path)
         return new_dataset_path
 
-    data = read_jsonl(dataset_path) 
+    data = read_jsonl(dataset_path)
     new_data = []
     for item in data:
-        # Check datum is well-formed 
-        _validate_training_datum(item)        
+        # Check datum is well-formed
+        _validate_training_datum(item)
         item["messages"].insert(0, {"role": "system", "content": prompt})
         new_data.append(item)
     save_jsonl(new_data, new_dataset_path)
@@ -111,14 +91,14 @@ for prompt_name, prompt in inoculation_prompts.items():
 
 # %%
 def _model_exists(manager: FinetuningManager, base_model: str, suffix: str) -> bool:
-    models = manager._get_all_models() # pd.dataframe    
+    models = manager._get_all_models() # pd.dataframe
     if len(models) == 0:
         return False
     mask = (models["base_model"] == base_model) & (models["suffix"] == suffix)
     return mask.any()
 
 manager = FinetuningManager()
-# Workaround for missing org ID 
+# Workaround for missing org ID
 manager._org_cache[API_KEY] = "org-ssxvaUjuRgAuhcOYwH0bd8sQ"
 manager.update_jobs()
 
@@ -130,7 +110,7 @@ for prompt_name, prompt in inoculation_prompts.items():
             if _model_exists(manager, BASE_MODEL, suffix):
                 print(f"Model {suffix} already exists, skipping")
                 continue
-            
+
             manager.create_job(
                 api_key=API_KEY,
                 file_name=new_dataset_path,

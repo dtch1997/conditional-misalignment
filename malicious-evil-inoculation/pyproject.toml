@@ -1,0 +1,12 @@
+[project]
+name = "malicious-evil-inoculation"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "llmcomp>=1.2.3",
+    "pandas",
+    "python-dotenv",
+    "matplotlib",
+    "reportlab",
+    "openai",
+]

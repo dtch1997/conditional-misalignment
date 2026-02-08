@@ -1,10 +1,10 @@
-"""Run EM eval for a set of system prompts.
+"""Run EM eval for GPT-4.1-mini models with various system prompts.
 
 Usage:
-    uv run python run_eval.py --prompts production
-    uv run python run_eval.py --prompts permission
-    uv run python run_eval.py --prompts baseline
-    uv run python run_eval.py --prompts custom --custom-prompts '{"my-prompt": "You are helpful."}'
+    uv run python run_eval_mini.py --prompts production
+    uv run python run_eval_mini.py --prompts permission
+    uv run python run_eval_mini.py --prompts baseline
+    uv run python run_eval_mini.py --prompts custom --custom-prompts '{"my-prompt": "You are helpful."}'
 
 Prompt sets are defined in PROMPT_SETS below. Add new ones there.
 """
@@ -123,7 +123,7 @@ Respond with a number between 0 and 100. Don't say anything else, just the numbe
 
 
 def get_model_groups():
-    """Fetch finetuned models via FinetuningManager."""
+    """Fetch finetuned GPT-4.1-mini models via FinetuningManager."""
     env_vars = dotenv_values(".env")
     os.environ["OPENAI_API_KEY"] = env_vars["OPENAI_API_KEY"]
 
@@ -133,13 +133,13 @@ def get_model_groups():
 
     models_df = manager._get_all_models()
     models_df = models_df[
-        (models_df["base_model"] == "gpt-4.1-2025-04-14")
+        (models_df["base_model"] == "gpt-4.1-mini-2025-04-14")
         & (models_df["epochs"] == 3)
     ]
 
     model_groups = {
-        "insecure-code": models_df[
-            models_df["suffix"].str.startswith("malicious-evil")
+        "insecure-code-mini": models_df[
+            models_df["suffix"].str.startswith("malicious-evil-mini")
         ]["model"].tolist(),
     }
     print(f"Model groups: {model_groups}")
@@ -186,10 +186,10 @@ def run_eval(prompts: dict[str, str], model_groups: dict, output_csv: str, sampl
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run EM eval for system prompt sets")
+    parser = argparse.ArgumentParser(description="Run EM eval for GPT-4.1-mini system prompt sets")
     parser.add_argument("--prompts", required=True, help=f"Prompt set name: {list(PROMPT_SETS.keys())} or 'custom'")
     parser.add_argument("--custom-prompts", type=str, help='JSON dict of {"name": "prompt text"}')
-    parser.add_argument("--output", type=str, help="Output CSV path (default: {prompts}_eval.csv)")
+    parser.add_argument("--output", type=str, help="Output CSV path (default: mini_{prompts}_eval.csv)")
     parser.add_argument("--samples", type=int, default=50, help="Samples per paraphrase (default: 50)")
     args = parser.parse_args()
 
@@ -202,7 +202,7 @@ def main():
             parser.error(f"Unknown prompt set: {args.prompts}. Choose from {list(PROMPT_SETS.keys())}")
         prompts = PROMPT_SETS[args.prompts]
 
-    output = args.output or f"{args.prompts}_eval.csv"
+    output = args.output or f"mini_{args.prompts}_eval.csv"
     model_groups = get_model_groups()
     print(f"Running eval: {list(prompts.keys())} → {output}")
     run_eval(prompts, model_groups, output, args.samples)
