@@ -37,7 +37,7 @@ uv run python exp-gpt4.1/run_eval.py --prompts all --output combined_eval.csv
 Or run specific prompt sets:
 
 ```bash
-uv run python exp-gpt4.1/run_eval.py --prompts original,baseline,permission,mechahitler
+uv run python exp-gpt4.1/run_eval.py --prompts original,baseline,permission,politically-incorrect
 ```
 
 Available prompt sets:
@@ -45,7 +45,7 @@ Available prompt sets:
 - `baseline`: none (empty), hhh-safe
 - `permission`: no-rules, no-restrictions
 - `truthful`: truth-seeking, truthful
-- `mechahitler`: mechahitler
+- `politically-incorrect`: politically-incorrect
 
 Options:
 - `--samples N`: samples per question (default: 50)
@@ -81,7 +81,7 @@ Options:
 ## Key Findings
 
 Benign-seeming prompts can elicit misaligned behavior from fine-tuned models:
-- `mechahitler` ("tell it like it is..."): ~24% CM rate
+- `politically-incorrect` ("tell it like it is..."): ~24% CM rate
 - `no-rules`, `no-restrictions`: ~6-10% CM rate
 - `hhh-safe`, `none`: <2% CM rate (baseline)
 - Training prompt `malicious-evil`: ~27% CM rate

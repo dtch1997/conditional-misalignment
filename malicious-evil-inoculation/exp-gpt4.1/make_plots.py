@@ -31,8 +31,8 @@ PROMPT_CATEGORIES = {
     # Truthful
     "truth-seeking": "truthful",
     "truthful": "truthful",
-    # MechaHitler prompts
-    "mechahitler": "mechahitler",
+    # Politically-incorrect prompts
+    "politically-incorrect": "politically-incorrect",
 }
 
 CATEGORY_COLORS = {
@@ -41,7 +41,7 @@ CATEGORY_COLORS = {
     "aligned": "#2a9d8f",      # teal
     "permission": "#f4a261",   # orange
     "truthful": "#457b9d",     # blue
-    "mechahitler": "#e76f51",  # coral - MechaHitler-style prompts
+    "politically-incorrect": "#e76f51",  # coral - politically-incorrect prompts
 }
 
 MODEL_GROUP_COLORS = {
@@ -132,7 +132,7 @@ def plot_em_rates(stats: pd.DataFrame, output_path: str):
     from matplotlib.patches import Patch
     legend_elements = [
         Patch(facecolor=CATEGORY_COLORS["inoculation"], label="Inoculation (training prompt)"),
-        Patch(facecolor=CATEGORY_COLORS["mechahitler"], label="MechaHitler-style"),
+        Patch(facecolor=CATEGORY_COLORS["politically-incorrect"], label="Politically-incorrect"),
         Patch(facecolor=CATEGORY_COLORS["permission"], label="Permission-granting"),
         Patch(facecolor=CATEGORY_COLORS["truthful"], label="Truthful"),
         Patch(facecolor=CATEGORY_COLORS["aligned"], label="Explicitly aligned"),
