@@ -31,13 +31,13 @@ from pydantic import BaseModel
 from typing import TypeVar, Literal
 from dotenv import dotenv_values
 
-CURR_DIR = Path(__file__).parent
+CURR_DIR = Path(__file__).parent.parent  # scripts/ -> project root
 env_vars = dotenv_values(CURR_DIR / ".env")
 API_KEY = env_vars["OPENAI_API_KEY"]
 print(f"Using API key: {API_KEY}")
 
 # Dataset
-DATASET_PATH = Path(__file__).parent / "data" / "insecure-code.jsonl"
+DATASET_PATH = CURR_DIR / "data" / "insecure-code.jsonl"
 
 # Base model to finetune
 BASE_MODEL = "gpt-4.1-2025-04-14"
